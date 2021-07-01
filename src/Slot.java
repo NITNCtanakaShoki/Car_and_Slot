@@ -6,32 +6,21 @@ public class Slot {
     private final String NO_CONTACT_STATUS = "NoCont";
 
     public Slot() {
-        this.car = null;
-        this.contColor = NO_CONTACT_STATUS;
-        this.contNo = NO_CONTACT_STATUS;
+        car       = null;
+        contColor = NO_CONTACT_STATUS;
+        contNo    = NO_CONTACT_STATUS;
     }
 
-    private boolean isContacted() {
-        if ( this.contColor.equals(NO_CONTACT_STATUS) ) return false;
-        if ( this.contNo.equals(NO_CONTACT_STATUS) ) return false;
-        return true;
-    }
-
-    private boolean isExistCar() {
-        if ( this.car == null ) return false;
-        return true;
-    }
     boolean contract( Car car ) {
-        if ( this.isContacted() ) return false;
+        if ( isHaveContact() ) return false;
 
-        this.contColor = car.getColor();
-        this.contNo = car.getNo();
+        contactWork( car );
         return true;
     }
 
     void cancel() {
-        this.contNo = NO_CONTACT_STATUS;
-        this.contColor = NO_CONTACT_STATUS;
+        contNo    = NO_CONTACT_STATUS;
+        contColor = NO_CONTACT_STATUS;
     }
 
     boolean carIn( Car car ) {
@@ -42,32 +31,52 @@ public class Slot {
     }
 
     Car carOut(Car car) {
-        Car result = new Car( this.car.getColor(), car.getNo() );
+        Car result = new Car( this.car.getColor(), this.car.getNo() );
         this.car = null;
         return result;
     }
 
     boolean check() {
         if ( !isExistCar() ) return true;
-        if ( !this.car.getColor().equals( this.contColor ) ) return false;
-        if ( !this.car.getNo().equals( this.contNo ) ) return false;
-        return true;
+        return isSameParkedCarAndContactCar();
     }
 
     public String toString() {
         if ( isExistCar() ) {
             return  String.format(
                     "%s(%s): %s(%s)",
-                    this.car.getNo(),
-                    this.car.getColor(),
-                    this.contNo,
-                    this.contColor
+                    car.getNo(),
+                    car.getColor(),
+                    contNo,
+                    contColor
             );
         }
         return String.format(
                 "no car: %s(%s)",
-                this.contNo,
-                this.contColor
+                contNo,
+                contColor
         );
     }
+
+    private boolean isHaveContact() {
+        if ( contColor.equals( NO_CONTACT_STATUS ) ) return false;
+        if ( contNo.equals( NO_CONTACT_STATUS ) ) return false;
+        return true;
+    }
+
+    private void contactWork(Car car) {
+        contColor = car.getColor();
+        contNo = car.getNo();
+    }
+
+    private boolean isExistCar() {
+        return car != null;
+    }
+
+    private boolean isSameParkedCarAndContactCar() {
+        if ( !car.getColor().equals( contColor ) ) return false;
+        if ( !car.getNo().equals( contNo ) ) return false;
+        return true;
+    }
+
 }
